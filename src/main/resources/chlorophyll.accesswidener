@@ -1,0 +1,18 @@
+accessWidener	v1	named
+accessible method net/minecraft/server/MinecraftServer runServer ()V
+accessible method net/minecraft/server/MinecraftServer synchronizeTime (Lnet/minecraft/server/level/ServerLevel;)V
+accessible field net/minecraft/server/network/ServerCommonPacketListenerImpl connection Lnet/minecraft/network/Connection;
+accessible field net/minecraft/server/network/ServerConfigurationPacketListenerImpl clientInformation Lnet/minecraft/server/level/ClientInformation;
+accessible method net/minecraft/server/network/ServerCommonPacketListenerImpl createCookie (Lnet/minecraft/server/level/ClientInformation;)Lnet/minecraft/server/network/CommonListenerCookie;
+accessible method net/minecraft/world/entity/Entity removeAfterChangingDimensions ()V
+accessible method net/minecraft/world/entity/Entity unsetRemoved ()V
+accessible field net/minecraft/server/level/ServerPlayer isChangingDimension Z
+accessible field net/minecraft/server/level/ServerPlayer enteredNetherPosition Lnet/minecraft/world/phys/Vec3;
+accessible field net/minecraft/server/level/ServerPlayer lastSentFood I
+accessible field net/minecraft/server/level/ServerPlayer lastSentHealth F
+accessible field net/minecraft/server/level/ServerPlayer lastSentExp I
+accessible method net/minecraft/server/level/ServerPlayer triggerDimensionChangeTriggers (Lnet/minecraft/server/level/ServerLevel;)V
+accessible method net/minecraft/world/level/block/NetherPortalBlock getExitPortal (Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/level/border/WorldBorder;)Lnet/minecraft/world/level/portal/DimensionTransition;
+accessible field net/minecraft/server/level/ServerChunkCache mainThreadProcessor Lnet/minecraft/server/level/ServerChunkCache$MainThreadExecutor;
+accessible method net/minecraft/server/players/PlayerList save (Lnet/minecraft/server/level/ServerPlayer;)V
+accessible field net/minecraft/server/MinecraftServer storageSource Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;

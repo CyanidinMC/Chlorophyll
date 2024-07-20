@@ -1,0 +1,27 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.mrhua269.chlorophyll.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BlockableEventLoopMixin",
+    "EndPortalMixin",
+    "EntityMixin",
+    "LevelMixin",
+    "MinecraftServerMixin",
+    "NetherPortalBlockMixin",
+    "PacketUtilsMixin",
+    "PlayerListMixin",
+    "ServerChunkCacheMixin",
+    "ServerCommonPacketListenerImplMixin",
+    "ServerConfigurationPacketListenerImplMixin",
+    "ServerConnectionListenerMixin",
+    "ServerGamePacketListenerImplMixin",
+    "ServerPlayerMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

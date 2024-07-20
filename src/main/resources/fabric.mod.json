@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "chlorophyll",
+  "version": "${version}",
+  "name": "Chlorophyll",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/MrHua269/Chlorophyll"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/chlorophyll/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.mrhua269.chlorophyll.client.ChlorophyllClient"
+    ],
+    "main": [
+      "me.mrhua269.chlorophyll.Chlorophyll"
+    ]
+  },
+  "mixins": [
+    "chlorophyll.mixins.json"
+  ],
+  "accessWidener": "chlorophyll.accesswidener",
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
