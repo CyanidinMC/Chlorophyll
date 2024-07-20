@@ -12,6 +12,7 @@
     "NetherPortalBlockMixin",
     "PacketUtilsMixin",
     "PlayerListMixin",
+    "RedStoneWireBlockMixin",
     "ServerChunkCacheMixin",
     "ServerCommonPacketListenerImplMixin",
     "ServerConfigurationPacketListenerImplMixin",
