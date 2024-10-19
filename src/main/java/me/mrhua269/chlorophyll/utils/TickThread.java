@@ -4,7 +4,7 @@ import me.mrhua269.chlorophyll.impl.ChlorophyllLevelTickLoop;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
-public class TickThread extends Thread{
+public class TickThread extends ca.spottedleaf.moonrise.common.util.TickThread {
     private final boolean isWorldThread;
     public ChlorophyllLevelTickLoop currentTickLoop;
 

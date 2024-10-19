@@ -25,6 +25,7 @@ public class Chlorophyll implements ModInitializer {
         wrapped.setContextClassLoader(MinecraftServer.class.getClassLoader());
         return wrapped;
     });
+    public static boolean shouldRunTaskOnMain = true;
 
     public static void killAllAndAwait(){
         for (ChlorophyllLevelTickLoop tickLoop : tickLoops.values()){

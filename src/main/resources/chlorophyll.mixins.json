@@ -7,7 +7,6 @@
     "BlockableEventLoopMixin",
     "EndPortalMixin",
     "EntityMixin",
-    "LevelMixin",
     "MinecraftServerMixin",
     "NetherPortalBlockMixin",
     "PacketUtilsMixin",

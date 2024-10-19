@@ -1,40 +1,38 @@
 package me.mrhua269.chlorophyll.mixins;
 
+import me.mrhua269.chlorophyll.Chlorophyll;
 import me.mrhua269.chlorophyll.utils.TickThread;
 import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerChunkCache.class)
-public abstract class ServerChunkCacheMixin {
+public class ServerChunkCacheMixin {
     @Shadow @Final
-    Thread mainThread;
+    ServerLevel level;
 
-    @Redirect(method = "getChunkFuture", at = @At(value = "INVOKE", target= "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
-    public Thread mainThreadCheckByPass$getChunkFuture() {
-        return byPassMainThreadCheckIfTickThread();
-    }
-
-    @Redirect(method = "getChunk", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
-    public Thread mainThreadCheckByPass$getChunk() {
-        return byPassMainThreadCheckIfTickThread();
-    }
-
-    @Redirect(method = "getChunkNow", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
-    public Thread mainThreadCheckByPass$getChunkNow() {
-        return byPassMainThreadCheckIfTickThread();
-    }
-
-    @Unique
-    private Thread byPassMainThreadCheckIfTickThread(){
-        if (!TickThread.isTickThread()){
-            return Thread.currentThread();
+    @Inject(method = "pollTask", at = @At(value = "HEAD"), cancellable = true)
+    public void onPollTaskCall(CallbackInfoReturnable<Boolean> cir) {
+        if (Chlorophyll.shouldRunTaskOnMain) {
+            return;
         }
 
-        return this.mainThread;
+        final TickThread tickThread = TickThread.currentThread();
+
+        if (tickThread == null) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        final ServerLevel self = this.level;
+
+        if (self != null && self != tickThread.currentTickLoop.getOwnedLevel()) {
+            cir.setReturnValue(false);
+        }
     }
 }

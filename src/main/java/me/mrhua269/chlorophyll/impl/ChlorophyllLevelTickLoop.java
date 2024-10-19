@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.level.storage.ServerLevelData;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Iterator;
@@ -41,6 +42,11 @@ public class ChlorophyllLevelTickLoop implements Runnable{
     public ChlorophyllLevelTickLoop(ServerLevel ownedLevel, ScheduledThreadPoolExecutor masterPool) {
         this.ownedLevel = ownedLevel;
         this.masterPool = masterPool;
+    }
+
+    @NotNull
+    public ServerLevel getOwnedLevel(){
+        return this.ownedLevel;
     }
 
     public void killSignal(){

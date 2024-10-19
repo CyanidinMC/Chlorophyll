@@ -1,6 +1,6 @@
 package me.mrhua269.chlorophyll.mixins;
 
-import me.mrhua269.chlorophyll.utils.TickThread;
+import ca.spottedleaf.moonrise.common.util.TickThread;
 import net.minecraft.util.thread.BlockableEventLoop;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
