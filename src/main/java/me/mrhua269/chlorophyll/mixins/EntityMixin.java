@@ -57,14 +57,11 @@ public abstract class EntityMixin implements ITaskSchedulingEntity {
             final Entity thisEntity = (Entity) (Object)this;
 
             entity.restoreFrom(thisEntity);
-            if (thisEntity instanceof ServerPlayer serverPlayer) ((ITaskSchedulingLevel) this.level).chlorophyll$getTickLoop().removeConnection(serverPlayer.connection.connection);
             this.removeAfterChangingDimensions();
             entity.teleportSetPosition(PositionMoveRotation.of(teleportTransition), teleportTransition.relatives());
 
 
             ((ITaskSchedulingLevel) serverLevel).chlorophyll$getTickLoop().schedule(() -> {
-                if (entity instanceof ServerPlayer serverPlayer) ((ITaskSchedulingLevel) serverLevel).chlorophyll$getTickLoop().addConnection(serverPlayer.connection.connection);
-
                 serverLevel.addDuringTeleport(entity);
                 serverLevel.resetEmptyTime();
 
