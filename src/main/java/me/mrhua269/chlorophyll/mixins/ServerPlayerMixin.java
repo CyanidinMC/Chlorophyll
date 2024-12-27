@@ -1,81 +1,68 @@
 package me.mrhua269.chlorophyll.mixins;
 
-import me.mrhua269.chlorophyll.Chlorophyll;
-import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
-import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.level.storage.LevelData;
+import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Mixin(ServerPlayer.class)
-public class ServerPlayerMixin {
+public abstract class ServerPlayerMixin extends Player {
+
+    @Shadow @Nullable public abstract BlockPos getRespawnPosition();
+
+    @Shadow public abstract float getRespawnAngle();
+
+    @Shadow public abstract boolean isRespawnForced();
+
+    @Shadow public abstract ResourceKey<Level> getRespawnDimension();
+
+    @Shadow
+    private static Optional<ServerPlayer.RespawnPosAngle> findRespawnAndUseSpawnBlock(ServerLevel serverLevel, BlockPos blockPos, float f, boolean bl, boolean bl2) {
+        return Optional.empty();
+    }
+
+    @Shadow @Final public MinecraftServer server;
+
+    public ServerPlayerMixin(Level level, BlockPos blockPos, float f, GameProfile gameProfile) {
+        super(level, blockPos, f, gameProfile);
+    }
+
     /**
      * @author MrHua269
      * @reason Worldized ticking
      */
     @Overwrite
-    @Nullable
-    public Entity changeDimension(DimensionTransition dimensionTransition) {
-        final ServerPlayer thisEntity = (ServerPlayer) (Object) this;
-        if (thisEntity.isRemoved()) {
-            return null;
-        } else {
-            if (dimensionTransition.missingRespawnBlock()) {
-                thisEntity.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
-            }
+    public TeleportTransition findRespawnPositionAndUseSpawnBlock(boolean bl, TeleportTransition.PostTeleportTransition postTeleportTransition) {
+        BlockPos blockPos = this.getRespawnPosition();
+        float f = this.getRespawnAngle();
+        boolean bl2 = this.isRespawnForced();
+        ServerLevel serverLevel = this.server.getLevel(this.getRespawnDimension());
 
-            ServerLevel destinationLevel = dimensionTransition.newLevel();
-            ServerLevel currentLevel = thisEntity.serverLevel();
-            ResourceKey<Level> resourceKey = currentLevel.dimension();
-            if (destinationLevel.dimension() == resourceKey) {
-                thisEntity.connection.teleport(dimensionTransition.pos().x, dimensionTransition.pos().y, dimensionTransition.pos().z, dimensionTransition.yRot(), dimensionTransition.xRot());
-                thisEntity.connection.resetPosition();
-                dimensionTransition.postDimensionTransition().onTransition(thisEntity);
+        if (serverLevel != null && blockPos != null) {
+            Optional<ServerPlayer.RespawnPosAngle> optional = CompletableFuture.supplyAsync(() -> findRespawnAndUseSpawnBlock(serverLevel, blockPos, f, bl2, bl), this.server.overworld().getChunkSource().mainThreadProcessor).join();
+
+            if (optional.isPresent()) {
+                ServerPlayer.RespawnPosAngle respawnPosAngle = optional.get();
+                return new TeleportTransition(serverLevel, respawnPosAngle.position(), Vec3.ZERO, respawnPosAngle.yaw(), 0.0F, postTeleportTransition);
             } else {
-                thisEntity.isChangingDimension = true;
-                currentLevel.removePlayerImmediately(thisEntity, Entity.RemovalReason.CHANGED_DIMENSION);
-                Chlorophyll.getTickLoop(currentLevel).removeConnection(thisEntity.connection.connection);
-
-                Chlorophyll.getTickLoop(destinationLevel).schedule(() -> {
-                    Chlorophyll.getTickLoop(destinationLevel).addConnection(thisEntity.connection.connection);
-                    LevelData levelData = destinationLevel.getLevelData();
-                    thisEntity.connection.send(new ClientboundRespawnPacket(thisEntity.createCommonSpawnInfo(destinationLevel), (byte)3));
-                    thisEntity.connection.send(new ClientboundChangeDifficultyPacket(levelData.getDifficulty(), levelData.isDifficultyLocked()));
-                    PlayerList playerList = thisEntity.server.getPlayerList();
-                    playerList.sendPlayerPermissionLevel(thisEntity);
-                    thisEntity.unsetRemoved();
-                    if (resourceKey == Level.OVERWORLD && destinationLevel.dimension() == Level.NETHER) {
-                        thisEntity.enteredNetherPosition = thisEntity.position();
-                    }
-
-                    thisEntity.setServerLevel(destinationLevel);
-                    thisEntity.connection.teleport(dimensionTransition.pos().x, dimensionTransition.pos().y, dimensionTransition.pos().z, dimensionTransition.yRot(), dimensionTransition.xRot());
-                    thisEntity.connection.resetPosition();
-                    destinationLevel.addDuringTeleport(thisEntity);
-                    thisEntity.triggerDimensionChangeTriggers(currentLevel);
-                    thisEntity.connection.send(new ClientboundPlayerAbilitiesPacket(thisEntity.getAbilities()));
-                    playerList.sendLevelInfo(thisEntity, destinationLevel);
-                    playerList.sendAllPlayerInfo(thisEntity);
-                    playerList.sendActivePlayerEffects(thisEntity);
-                    dimensionTransition.postDimensionTransition().onTransition(thisEntity);
-                    thisEntity.lastSentExp = -1;
-                    thisEntity.lastSentHealth = -1.0F;
-                    thisEntity.lastSentFood = -1;
-                });
+                return CompletableFuture.supplyAsync(() -> TeleportTransition.missingRespawnBlock(this.server.overworld(), this, postTeleportTransition), this.server.overworld().getChunkSource().mainThreadProcessor).join();
             }
-
-            return thisEntity;
+        } else {
+            return new TeleportTransition(this.server.overworld(), this, postTeleportTransition);
         }
     }
-
 }

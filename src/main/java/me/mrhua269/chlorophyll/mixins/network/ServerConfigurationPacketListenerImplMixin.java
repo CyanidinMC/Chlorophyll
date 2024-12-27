@@ -1,6 +1,6 @@
-package me.mrhua269.chlorophyll.mixins;
+package me.mrhua269.chlorophyll.mixins.network;
 
-import me.mrhua269.chlorophyll.Chlorophyll;
+import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingLevel;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +21,8 @@ public abstract class ServerConfigurationPacketListenerImplMixin {
     @Redirect(method = "handleConfigurationFinished", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;placeNewPlayer(Lnet/minecraft/network/Connection;Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/server/network/CommonListenerCookie;)V"))
     public void redirect$placeNewPlayer(PlayerList playerList, Connection connection, @NotNull ServerPlayer serverPlayer, CommonListenerCookie commonListenerCookie) {
         final ServerCommonPacketListenerImpl thisCommonHandler = (ServerCommonPacketListenerImpl) (Object) this;
-        Chlorophyll.getTickLoop(serverPlayer.serverLevel()).schedule(() -> playerList.placeNewPlayer(thisCommonHandler.connection, serverPlayer, thisCommonHandler.createCookie(this.clientInformation)));
+        ((ITaskSchedulingLevel) serverPlayer.serverLevel()).chlorophyll$getTickLoop().schedule(() ->
+                playerList.placeNewPlayer(thisCommonHandler.connection, serverPlayer, thisCommonHandler.createCookie(this.clientInformation))
+        );
     }
 }

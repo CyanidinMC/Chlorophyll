@@ -16,3 +16,8 @@ accessible method net/minecraft/world/level/block/NetherPortalBlock getExitPorta
 accessible field net/minecraft/server/level/ServerChunkCache mainThreadProcessor Lnet/minecraft/server/level/ServerChunkCache$MainThreadExecutor;
 accessible method net/minecraft/server/players/PlayerList save (Lnet/minecraft/server/level/ServerPlayer;)V
 accessible field net/minecraft/server/MinecraftServer storageSource Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;
+accessible method net/minecraft/world/entity/ai/behavior/PoiCompetitorScan selectWinner (Lnet/minecraft/world/entity/npc/Villager;Lnet/minecraft/world/entity/npc/Villager;)Lnet/minecraft/world/entity/npc/Villager;
+accessible class net/minecraft/server/level/ServerPlayer$RespawnPosAngle
+accessible method net/minecraft/server/level/ServerPlayer$RespawnPosAngle position ()Lnet/minecraft/world/phys/Vec3;
+accessible method net/minecraft/world/entity/ai/behavior/YieldJobSite nearbyWantsJobsite (Lnet/minecraft/core/Holder;Lnet/minecraft/world/entity/npc/Villager;Lnet/minecraft/core/BlockPos;)Z
+accessible method net/minecraft/world/entity/ai/behavior/GoToPotentialJobSite stop (Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/npc/Villager;J)V

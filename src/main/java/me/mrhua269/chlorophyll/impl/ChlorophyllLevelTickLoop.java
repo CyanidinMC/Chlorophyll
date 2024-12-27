@@ -3,6 +3,7 @@ package me.mrhua269.chlorophyll.impl;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.mojang.logging.LogUtils;
+import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingEntity;
 import me.mrhua269.chlorophyll.utils.TickThread;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
@@ -11,6 +12,7 @@ import net.minecraft.network.protocol.common.ClientboundDisconnectPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.ServerLevelData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -161,8 +163,16 @@ public class ChlorophyllLevelTickLoop implements Runnable{
         }
     }
 
+    private void tickEntitySchedulers() {
+        for (Entity entity : this.ownedLevel.getAllEntities()) {
+            ((ITaskSchedulingEntity) entity).chlorophyll$getTaskScheduler().runTasks();
+        }
+    }
+
     private void internalTick(){
         this.processMainThreadTasks();
+
+        this.tickEntitySchedulers();
 
         for (Connection connection : this.connections){
             ((ServerGamePacketListenerImpl) connection.getPacketListener()).suspendFlushing();

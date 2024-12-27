@@ -1,6 +1,6 @@
 package me.mrhua269.chlorophyll.mixins;
 
-import me.mrhua269.chlorophyll.Chlorophyll;
+import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingMinecraftServer;
 import me.mrhua269.chlorophyll.utils.TickThread;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +18,7 @@ public class ServerChunkCacheMixin {
 
     @Inject(method = "pollTask", at = @At(value = "HEAD"), cancellable = true)
     public void onPollTaskCall(CallbackInfoReturnable<Boolean> cir) {
-        if (Chlorophyll.shouldRunTaskOnMain) {
+        if (((ITaskSchedulingMinecraftServer) this.level.getServer()).chlorophyll$shouldPollChunkTasks()) {
             return;
         }
 

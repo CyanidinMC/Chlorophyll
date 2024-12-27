@@ -1,6 +1,6 @@
-package me.mrhua269.chlorophyll.mixins;
+package me.mrhua269.chlorophyll.mixins.network;
 
-import me.mrhua269.chlorophyll.Chlorophyll;
+import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingEntity;
 import net.minecraft.ReportedException;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
@@ -58,8 +58,7 @@ public abstract class PacketUtilsMixin {
             if (packetListener instanceof ServerLoginPacketListenerImpl || packetListener instanceof ServerConfigurationPacketListenerImpl || packetListener instanceof ServerStatusPacketListenerImpl){
                 blockableEventLoop.executeIfPossible(scheduledHandle);
             }else{
-                final ServerGamePacketListenerImpl gamePacketListener = ((ServerGamePacketListenerImpl) packetListener);
-                Chlorophyll.getTickLoop(gamePacketListener.player.serverLevel()).schedule(scheduledHandle);
+                ((ITaskSchedulingEntity) ((ServerGamePacketListenerImpl) packetListener).player).chlorophyll$getTaskScheduler().schedule(scheduledHandle);
             }
 
             throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;

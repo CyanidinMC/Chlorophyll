@@ -1,6 +1,6 @@
-package me.mrhua269.chlorophyll.mixins;
+package me.mrhua269.chlorophyll.mixins.network;
 
-import me.mrhua269.chlorophyll.Chlorophyll;
+import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingLevel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -15,6 +15,6 @@ public class ServerGamePacketListenerImplMixin {
 
     @Redirect(method = "tryHandleChat", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;execute(Ljava/lang/Runnable;)V"))
     public void mainThreadTask$handleChat(MinecraftServer instance, Runnable runnable){
-        Chlorophyll.getTickLoop(this.player.serverLevel()).schedule(runnable);
+        ((ITaskSchedulingLevel) this.player.serverLevel()).chlorophyll$getTickLoop().schedule(runnable);
     }
 }

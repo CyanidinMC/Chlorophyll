@@ -1,6 +1,6 @@
-package me.mrhua269.chlorophyll.mixins;
+package me.mrhua269.chlorophyll.mixins.network;
 
-import me.mrhua269.chlorophyll.Chlorophyll;
+import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingLevel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -20,7 +20,7 @@ public class ServerCommonPacketListenerImplMixin {
         final ServerCommonPacketListenerImpl thisHandler = (ServerCommonPacketListenerImpl) (Object) this;
 
         if (thisHandler instanceof ServerGamePacketListenerImpl gamePacketListener){
-            Chlorophyll.getTickLoop(gamePacketListener.player.serverLevel()).executeBlocking(runnable);
+            ((ITaskSchedulingLevel) gamePacketListener.player.serverLevel()).chlorophyll$getTickLoop().executeBlocking(runnable);
             return;
         }
 

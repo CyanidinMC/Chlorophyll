@@ -1,4 +1,4 @@
-package me.mrhua269.chlorophyll.mixins;
+package me.mrhua269.chlorophyll.mixins.network;
 
 import net.minecraft.network.Connection;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
