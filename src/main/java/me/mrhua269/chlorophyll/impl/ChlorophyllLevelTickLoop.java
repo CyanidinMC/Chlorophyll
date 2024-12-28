@@ -94,6 +94,10 @@ public class ChlorophyllLevelTickLoop implements Runnable{
         }
     }
 
+    public long getLastTickTime() {
+        return this.lastTickTime;
+    }
+
     private void saveLevel(){
         this.ownedLevel.save(null, false,  this.ownedLevel.noSave);
 
