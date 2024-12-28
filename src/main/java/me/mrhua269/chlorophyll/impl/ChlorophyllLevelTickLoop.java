@@ -20,12 +20,9 @@ import org.slf4j.Logger;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-public class ChlorophyllLevelTickLoop implements Runnable{
+public class ChlorophyllLevelTickLoop implements Runnable, Executor {
     private static final Logger logger = LogUtils.getLogger();
 
     private final ServerLevel ownedLevel;
@@ -224,5 +221,10 @@ public class ChlorophyllLevelTickLoop implements Runnable{
 
     public int getTickCount() {
         return this.tickCount;
+    }
+
+    @Override
+    public void execute(@NotNull Runnable command) {
+        this.taskScope.offer(command);
     }
 }
