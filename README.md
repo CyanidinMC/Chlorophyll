@@ -2,6 +2,8 @@
 [![Issues](https://img.shields.io/github/issues/CyanidinMC/Chlorophyll?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
 ![Commit Activity](https://img.shields.io/github/commit-activity/w/CyanidinMC/Chlorophyll?style=flat-square)
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/CyanidinMC/Chlorophyll?style=flat-square)
+![GitHub Repo stars](https://img.shields.io/github/stars/CyanidinMC/Chlorophyll?style=flat-square)
+
 
 ## 它做了什么？
 该模组将每个世界包括世界上的其他杂物的tick迁移到了独立的tickloop中,使得每个世界包括原有的Server Thread之间几乎互不影响(除了传送门搜索的忙等待之外),
