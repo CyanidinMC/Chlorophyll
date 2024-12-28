@@ -3,11 +3,13 @@ package me.mrhua269.chlorophyll.mixins;
 import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,6 +26,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
@@ -122,5 +125,10 @@ public abstract class PlayerListMixin {
         });
 
         return serverPlayer2;
+    }
+
+    @Redirect(method = "disconnectAllPlayersWithProfile", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;disconnect(Lnet/minecraft/network/chat/Component;)V"))
+    public void chlorophyll$disconnectAllPlayersWithProfile(ServerGamePacketListenerImpl serverGamePacketListenerImpl, Component component) {
+        ((ITaskSchedulingLevel) serverGamePacketListenerImpl.player.serverLevel()).chlorophyll$getTickLoop().execute(() -> serverGamePacketListenerImpl.disconnect(component));
     }
 }

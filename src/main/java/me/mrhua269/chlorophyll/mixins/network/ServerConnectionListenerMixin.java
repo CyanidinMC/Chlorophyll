@@ -12,14 +12,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerConnectionListener.class)
 public class ServerConnectionListenerMixin {
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;isConnected()Z"))
-    public boolean redirect$ConnectedCheck(@NotNull Connection instance){
-        if (!instance.isConnected()){
-            return false;
-        }
-
-        return instance.getPacketListener() instanceof ServerLoginPacketListenerImpl
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;tick()V"))
+    public void redirect$TickCheck(@NotNull Connection instance){
+        boolean shouldTick = instance.getPacketListener() instanceof ServerLoginPacketListenerImpl
                 || instance.getPacketListener() instanceof ServerStatusPacketListenerImpl
                 || instance.getPacketListener() instanceof ServerConfigurationPacketListenerImpl;
+
+        if (shouldTick) {
+            instance.tick();
+        }
     }
 }
