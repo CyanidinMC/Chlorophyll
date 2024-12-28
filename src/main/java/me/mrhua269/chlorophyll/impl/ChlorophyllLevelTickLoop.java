@@ -142,7 +142,14 @@ public class ChlorophyllLevelTickLoop implements Runnable{
             }
         }
 
-        while (this.ownedLevel.getChunkSource().pollTask());
+        for (;;) {
+            // Poll chunk system tasks
+            if (!this.ownedLevel.getChunkSource().pollTask()) {
+                break;
+            }
+
+            // Leave nothing here because we won't and should block here
+        }
     }
 
     private void tickConnections(){

@@ -18,7 +18,7 @@ public class TickThread extends ca.spottedleaf.moonrise.common.util.TickThread {
     }
 
     @Contract(pure = true)
-    public static @Nullable TickThread currentThread(){
+    public static TickThread currentThread(){
         if (Thread.currentThread() instanceof TickThread tickThread){
             return tickThread;
         }
