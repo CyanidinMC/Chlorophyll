@@ -145,8 +145,7 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
                 break;
             }
 
-            // Leave nothing here because we won't and shouldn't 
-block here
+            // Leave nothing here because we won't and shouldn't block here
         }
     }
 
