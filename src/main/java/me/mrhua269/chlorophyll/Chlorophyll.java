@@ -51,6 +51,6 @@ public class Chlorophyll implements ModInitializer {
 
     @Override
     public void onInitialize() {
-
+        logger.info("Using {} threads for server level ticking.", workerPool.getCorePoolSize());
     }
 }
