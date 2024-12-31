@@ -12,7 +12,6 @@ public class LivingEntityMixin {
     @Redirect(method = "tickDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;remove(Lnet/minecraft/world/entity/Entity$RemovalReason;)V"))
     private void chlorophyll$removeRedirect(LivingEntity instance, Entity.RemovalReason reason) {
         if (!(((Entity) (Object) this) instanceof Player)) {
-            System.out.println(1);
             instance.remove(reason);
         }
     }
