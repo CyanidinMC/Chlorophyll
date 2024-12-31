@@ -9,6 +9,8 @@ import net.minecraft.world.entity.ai.behavior.OneShot;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
@@ -20,8 +22,9 @@ public class BabyFollowAdultMixin {
      * @author MrHua269
      * @reason Worldized ticking
      */
+    @Contract("_, _ -> new")
     @Overwrite
-    public static OneShot<AgeableMob> create(UniformInt uniformInt, Function<LivingEntity, Float> function) {
+    public static @NotNull OneShot<AgeableMob> create(UniformInt uniformInt, Function<LivingEntity, Float> function) {
         return BehaviorBuilder.create((instance) -> instance.group(instance.present(MemoryModuleType.NEAREST_VISIBLE_ADULT), instance.registered(MemoryModuleType.LOOK_TARGET), instance.absent(MemoryModuleType.WALK_TARGET)).apply(instance, (closetMemory, lookTargetMemory, walkTargetMemory) -> (serverLevel, self, l) -> {
             if (!self.isBaby()) {
                 return false;

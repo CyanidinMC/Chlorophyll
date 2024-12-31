@@ -2,9 +2,8 @@ package me.mrhua269.chlorophyll.utils;
 
 import me.mrhua269.chlorophyll.impl.ChlorophyllLevelTickLoop;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
 
-public class TickThread extends ca.spottedleaf.moonrise.common.util.TickThread {
+public class TickThread extends ca.spottedleaf.moonrise.common.util.TickThread { // Bypass the default thread checks by Moonrise
     private final boolean isWorldThread;
     public ChlorophyllLevelTickLoop currentTickLoop;
 

@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ServerChunkCache.class)
 public class ServerChunkCacheMixin {
     @Shadow @Final
-    ServerLevel level;
+    private ServerLevel level;
 
     @Inject(method = "pollTask", at = @At(value = "HEAD"), cancellable = true)
     public void onPollTaskCall(CallbackInfoReturnable<Boolean> cir) {
