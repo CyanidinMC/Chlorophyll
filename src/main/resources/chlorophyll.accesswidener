@@ -20,3 +20,4 @@ accessible class net/minecraft/server/level/ServerPlayer$RespawnPosAngle
 accessible method net/minecraft/server/level/ServerPlayer$RespawnPosAngle position ()Lnet/minecraft/world/phys/Vec3;
 accessible method net/minecraft/world/entity/ai/behavior/YieldJobSite nearbyWantsJobsite (Lnet/minecraft/core/Holder;Lnet/minecraft/world/entity/npc/Villager;Lnet/minecraft/core/BlockPos;)Z
 accessible method net/minecraft/world/entity/ai/behavior/GoToPotentialJobSite stop (Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/npc/Villager;J)V
+accessible method net/minecraft/world/entity/LivingEntity tickDeath ()V
