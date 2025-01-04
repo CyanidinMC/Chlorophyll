@@ -1,5 +1,5 @@
 # Chlorophyll
-[![Issues](https://img.shields.io/github/issues/CyanidinMC/Chlorophyll?style=flat-square)](https://github.com/LuminolMC/Luminol/issues)
+[![Issues](https://img.shields.io/github/issues/CyanidinMC/Chlorophyll?style=flat-square)](https://github.com/CyanidinMC/Chloriphyll/issues)
 ![Commit Activity](https://img.shields.io/github/commit-activity/w/CyanidinMC/Chlorophyll?style=flat-square)
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/CyanidinMC/Chlorophyll?style=flat-square)
 ![GitHub Repo stars](https://img.shields.io/github/stars/CyanidinMC/Chlorophyll?style=flat-square)
