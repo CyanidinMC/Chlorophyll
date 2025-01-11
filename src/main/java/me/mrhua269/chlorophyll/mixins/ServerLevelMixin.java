@@ -70,4 +70,9 @@ public abstract class ServerLevelMixin implements ITaskSchedulingLevel {
     private void onStructureStartsAvailable$mainThreadReturn(MinecraftServer server, Runnable runnable) {
         this.tickLoop.execute(runnable);
     }
+
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tickTime()V"))
+    private void tickTime$mainThreadReturn(ServerLevel serverLevel) {
+        return; // As we don't wanna tick this off server thread because some threading issue
+    }
 }
