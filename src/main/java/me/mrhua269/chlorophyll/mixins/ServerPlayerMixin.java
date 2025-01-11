@@ -135,7 +135,6 @@ public abstract class ServerPlayerMixin extends Player {
                 playerList.sendPlayerPermissionLevel(thisEntity);
                 serverLevel2.removePlayerImmediately(thisEntity, RemovalReason.CHANGED_DIMENSION);
                 ((ITaskSchedulingLevel) serverLevel2).chlorophyll$getTickLoop().removeConnection(this.connection.connection);
-                this.triggerDimensionChangeTriggers(serverLevel2);
 
                 ((ITaskSchedulingLevel) serverLevel).chlorophyll$getTickLoop().schedule(() -> {
                     ((ITaskSchedulingLevel) serverLevel).chlorophyll$getTickLoop().addConnection(this.connection.connection);
@@ -150,7 +149,7 @@ public abstract class ServerPlayerMixin extends Player {
                     this.connection.teleport(PositionMoveRotation.of(teleportTransition), teleportTransition.relatives());
                     this.connection.resetPosition();
                     serverLevel.addDuringTeleport(thisEntity);
-
+                    this.triggerDimensionChangeTriggers(serverLevel2);
                     this.stopUsingItem();
                     this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                     playerList.sendLevelInfo(thisEntity, serverLevel);
