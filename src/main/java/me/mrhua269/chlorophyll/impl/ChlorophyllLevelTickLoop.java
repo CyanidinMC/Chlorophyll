@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class ChlorophyllLevelTickLoop implements Runnable, Executor {
     private static final Logger logger = LogUtils.getLogger();
@@ -226,5 +227,38 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
     @Override
     public void execute(@NotNull Runnable command) {
         this.taskScope.offer(command);
+    }
+
+    public boolean pollTask() {
+        final Runnable scopedTask = this.taskScope.poll();
+
+        if (scopedTask != null) {
+            this.executeTask(scopedTask);
+            return true;
+        }
+
+        return this.ownedLevel.getChunkSource().pollTask();
+    }
+
+    protected void executeTask(Runnable task) {
+        try {
+            task.run();
+        }catch (Exception e) {
+            logger.error("Failed to execute task", e);
+        }
+    }
+
+    public void spinWait(@NotNull Supplier<Boolean> breaker) {
+        while (!breaker.get()) {
+            if (!this.pollTask()) {
+                Thread.onSpinWait();
+            }
+        }
+    }
+
+    public <T> T spinWait(@NotNull CompletableFuture<T> task) {
+        this.spinWait(task::isDone);
+
+        return task.join();
     }
 }

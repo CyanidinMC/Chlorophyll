@@ -79,13 +79,21 @@ public abstract class ServerPlayerMixin extends Player {
         ServerLevel serverLevel = this.server.getLevel(this.getRespawnDimension());
 
         if (serverLevel != null && blockPos != null) {
-            Optional<ServerPlayer.RespawnPosAngle> optional = CompletableFuture.supplyAsync(() -> findRespawnAndUseSpawnBlock(serverLevel, blockPos, f, bl2, bl), this.server.overworld().getChunkSource().mainThreadProcessor).join();
+            Optional<ServerPlayer.RespawnPosAngle> optional = ((ITaskSchedulingLevel) this.level()).chlorophyll$getTickLoop().spinWait(CompletableFuture.supplyAsync(
+                    () -> findRespawnAndUseSpawnBlock(serverLevel, blockPos, f, bl2, bl),
+                    this.server.overworld().getChunkSource().mainThreadProcessor
+            ));
 
             if (optional.isPresent()) {
                 ServerPlayer.RespawnPosAngle respawnPosAngle = optional.get();
                 return new TeleportTransition(serverLevel, respawnPosAngle.position(), Vec3.ZERO, respawnPosAngle.yaw(), 0.0F, postTeleportTransition);
             } else {
-                return CompletableFuture.supplyAsync(() -> TeleportTransition.missingRespawnBlock(this.server.overworld(), this, postTeleportTransition), this.server.overworld().getChunkSource().mainThreadProcessor).join();
+                return ((ITaskSchedulingLevel) this.level()).chlorophyll$getTickLoop().spinWait(
+                        CompletableFuture.supplyAsync(() ->
+                                TeleportTransition.missingRespawnBlock(this.server.overworld(), this, postTeleportTransition),
+                                this.server.overworld().getChunkSource().mainThreadProcessor
+                        )
+                );
             }
         } else {
             return new TeleportTransition(this.server.overworld(), this, postTeleportTransition);
@@ -127,6 +135,7 @@ public abstract class ServerPlayerMixin extends Player {
                 playerList.sendPlayerPermissionLevel(thisEntity);
                 serverLevel2.removePlayerImmediately(thisEntity, RemovalReason.CHANGED_DIMENSION);
                 ((ITaskSchedulingLevel) serverLevel2).chlorophyll$getTickLoop().removeConnection(this.connection.connection);
+                this.triggerDimensionChangeTriggers(serverLevel2);
 
                 ((ITaskSchedulingLevel) serverLevel).chlorophyll$getTickLoop().schedule(() -> {
                     ((ITaskSchedulingLevel) serverLevel).chlorophyll$getTickLoop().addConnection(this.connection.connection);
@@ -142,7 +151,6 @@ public abstract class ServerPlayerMixin extends Player {
                     this.connection.resetPosition();
                     serverLevel.addDuringTeleport(thisEntity);
 
-                    this.triggerDimensionChangeTriggers(serverLevel2);
                     this.stopUsingItem();
                     this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
                     playerList.sendLevelInfo(thisEntity, serverLevel);

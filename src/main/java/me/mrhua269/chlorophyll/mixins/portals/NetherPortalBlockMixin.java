@@ -1,5 +1,6 @@
 package me.mrhua269.chlorophyll.mixins.portals;
 
+import me.mrhua269.chlorophyll.utils.bridges.ITaskSchedulingLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -32,13 +33,13 @@ public abstract class NetherPortalBlockMixin {
         if (serverLevel2 == null) {
             return null;
         } else {
-            return CompletableFuture.supplyAsync(() -> {
+            return ((ITaskSchedulingLevel) serverLevel).chlorophyll$getTickLoop().spinWait(CompletableFuture.supplyAsync(() -> {
                 boolean bl = serverLevel2.dimension() == Level.NETHER;
                 WorldBorder worldBorder = serverLevel2.getWorldBorder();
                 double d = DimensionType.getTeleportationScale(serverLevel.dimensionType(), serverLevel2.dimensionType());
                 BlockPos blockPos2 = worldBorder.clampToBounds(entity.getX() * d, entity.getY(), entity.getZ() * d);
                 return this.getExitPortal(serverLevel2, entity, blockPos, blockPos2, bl, worldBorder);
-            }, serverLevel2.getChunkSource().mainThreadProcessor).join();
+            }, serverLevel2.getChunkSource().mainThreadProcessor));
         }
     }
 }
