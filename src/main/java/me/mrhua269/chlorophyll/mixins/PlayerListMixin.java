@@ -101,6 +101,7 @@ public abstract class PlayerListMixin {
         this.playersByUUID.put(serverPlayer2.getUUID(), serverPlayer2);
 
         ((ITaskSchedulingLevel) targetLevel).chlorophyll$getTickLoop().schedule(() -> {
+            ((ITaskSchedulingLevel) targetLevel).chlorophyll$getTickLoop().addConnection(serverPlayer2.connection.connection);
             targetLevel.addRespawnedPlayer(serverPlayer2);
             serverPlayer2.initInventoryMenu();
             serverPlayer2.setHealth(serverPlayer2.getHealth());
