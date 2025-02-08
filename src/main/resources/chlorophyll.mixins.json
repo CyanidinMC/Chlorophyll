@@ -4,7 +4,6 @@
   "package": "me.mrhua269.chlorophyll.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BlockableEventLoopMixin",
     "EntityMixin",
     "LevelMixin",
     "LivingEntityMixin",
