@@ -17,6 +17,8 @@
     "ai.GoToPotentialJobSiteMixin",
     "ai.PoiCompetitorScanMixin",
     "ai.YieldJobSiteMixin",
+    "commands.KillCommandMixin",
+    "commands.TeleportCommandMixin",
     "network.PacketUtilsMixin",
     "network.ServerCommonPacketListenerImplMixin",
     "network.ServerConfigurationPacketListenerImplMixin",

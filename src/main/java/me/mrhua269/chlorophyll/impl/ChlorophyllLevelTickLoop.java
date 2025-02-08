@@ -63,7 +63,13 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
 
     @Override
     public void run() {
-        TickThread.currentThread().currentTickLoop = this;
+        final TickThread currentWorker = TickThread.currentThread();
+
+        if (currentWorker == null) {
+            throw new IllegalStateException("Run tick in a non-tick thread!");
+        }
+
+        currentWorker.currentTickLoop = this;
         this.isTicking = true;
 
         this.tickCount++;
@@ -73,7 +79,7 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
         }catch (Exception e){
             logger.error("Error while ticking level", e);
         }finally {
-            TickThread.currentThread().currentTickLoop = null;
+            currentWorker.currentTickLoop = null;
             this.isTicking = false;
             final long timeEscaped = System.nanoTime() - tickStart;
             final long sleep = 1000000000L / 20L - timeEscaped;
@@ -179,24 +185,27 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
     }
 
     private void internalTick(){
-        this.processMainThreadTasks();
+        this.processMainThreadTasks(); // Process the main thread tasks
 
-        this.tickEntitySchedulers();
+        this.tickEntitySchedulers(); // Process entity tasks(Packets from player)
 
+        // Vanilla tickChildren
         for (Connection connection : this.connections){
             ((ServerGamePacketListenerImpl) connection.getPacketListener()).suspendFlushing();
         }
 
         this.ownedLevel.getServer().synchronizeTime(this.ownedLevel);
-        this.ownedLevel.tick(() -> true);
+        this.ownedLevel.tick(() -> true); // Always run the updates
         this.tickConnections();
 
         for (Connection connection : this.connections){
             final ServerGamePacketListenerImpl packetHandler = ((ServerGamePacketListenerImpl) connection.getPacketListener());
+
             packetHandler.chunkSender.sendNextChunks(packetHandler.player);
             packetHandler.resumeFlushing();
         }
 
+        // Auto save
         this.autoSaveCountDown--;
         if (this.autoSaveCountDown <= 0){
             this.autoSaveCountDown = 6000;
@@ -212,12 +221,27 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
     public void executeBlocking(Runnable task){
         final TickThread tickThread = TickThread.currentThread();
 
-        if (tickThread != null && tickThread.isWorldThread()){
+        // Not a tick thread
+        if (tickThread == null) {
+            CompletableFuture.runAsync(task, this::schedule).join();
+            return;
+        }
+
+        // Server thread
+        if (tickThread.isWorldThread()){
             task.run();
             return;
         }
 
-        CompletableFuture.runAsync(task, this::schedule).join();
+        final ChlorophyllLevelTickLoop targetTickLoop = tickThread.currentTickLoop;
+
+        // Not current tick loop
+        if (targetTickLoop != this) {
+            CompletableFuture.runAsync(task, this::schedule).join();
+            return;
+        }
+
+        task.run();
     }
 
     public int getTickCount() {
@@ -230,6 +254,7 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
     }
 
     public boolean pollTask() {
+        // Internal main thread task
         final Runnable scopedTask = this.taskScope.poll();
 
         if (scopedTask != null) {
@@ -237,6 +262,7 @@ public class ChlorophyllLevelTickLoop implements Runnable, Executor {
             return true;
         }
 
+        // Chunk system task
         return this.ownedLevel.getChunkSource().pollTask();
     }
 
