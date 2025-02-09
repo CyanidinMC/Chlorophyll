@@ -50,7 +50,7 @@ public abstract class MinecraftServerMixin implements ITaskSchedulingMinecraftSe
         Chlorophyll.server = (MinecraftServer) (Object)this;
         this.shouldPollChunkTask = false;
 
-        // Active the tick loops
+        // Try activating the tick loops
         for (ServerLevel level : this.getAllLevels()){
             ((ITaskSchedulingLevel) level).chlorophyll$setupTickLoop();
         }
